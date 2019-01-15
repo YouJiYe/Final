@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8" ?><!--  SQL 맵퍼 파일은 xml이기 때문에 제일 먼저 xml 선언이 옵니다. -->
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="Test">
+
+<!-- 사용자의 모든 아이디를 조회 -->
+ <select id="id_check" parameterType="String" resultType="member">
+	 select * from 
+	 penpa_member
+	 where id = #{id}
+ </select>
+
+<!-- 쪽지 저장 -->
+<insert id="letter_insert" parameterType="Letter">
+	insert into letter
+	(le_inx, le_fromUser, le_toUser, le_date, le_contents, le_state)
+	values(
+		le_inx_seq.nextval, #{le_fromUser},#{le_toUser}, sysdate, #{le_contents}, 0
+	)
+</insert>
+
+<!-- 보낸 쪽지함의 총 쪽지의 갯수-->
+<select id="letter_fromcount" resultType="int">
+	select count(*) from letter
+	<!-- where
+	le_fromUser = #{id} -->
+</select>
+
+<!-- 보낸 쪽지함 목록 -->
+<select id="letter_fromlist" parameterType="String" resultType="Letter">
+	<![CDATA[
+	select * from 
+		(select rownum rnum, le_inx, le_fromUser, le_toUser,
+				le_contents, le_state, le_date
+	from
+		(select * from letter le_inx_sql))
+	where
+	le_fromUser = #{id}
+	]]>
+</select>
+
+<!-- 보낸 쪽지함 - 쪽지의 상세 보기-->
+<select id="letter_fromcont" resultType="Letter">
+	select * from letter
+<!-- 	where
+	le_inx = #{le_inx} -->
+</select>
+
+<!-- 보낸 쪽지함 - 쪽지 상태 -->
+<update id="from_Hit">
+	update letter
+	set le_state = 1
+	where le_inx = #{le_le_inx}
+</update>
+
+<!-- 받은 쪽지함의 총 쪽지의 갯수 -->
+<select id="letter_tocount" resultType="int">
+	select count(*) from letter
+<!-- 	where
+	le_toUser = #{id} -->
+</select>
+
+<!-- 받은 쪽지함 -->
+<select id="letter_tolist" parameterType="String" resultType="Letter">
+	<![CDATA[
+	select * from 
+		(select rownum rnum, le_inx, le_fromUser, le_toUser,
+				le_contents, le_state, le_date
+	from
+		(select * from letter le_inx_sql))
+	where
+	le_toUser = #{le_toUser}
+	]]>
+</select>
+
+<!-- 보낸 쪽지함 - 쪽지의 상세 보기-->
+<select id="letter_tocont" resultType="Letter">
+	select * from letter
+	where
+	le_inx = #{le_inx}
+</select>
+
+<!-- 받은 사람이 답장 하기 -->
+
+
+<!-- 보낸 사람이 삭제 -->
+
+
+<!-- 받은 사람이 삭제 -->
+
+
+</mapper>
